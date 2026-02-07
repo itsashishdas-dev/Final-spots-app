@@ -79,6 +79,7 @@ export interface Spot {
   state: string;
   surface: string;
   location: { lat: number; lng: number; address: string };
+  path?: [number, number][]; // Array of [lat, lng] for Downhill routes
   notes: string;
   isVerified: boolean;
   verificationStatus: VerificationStatus;

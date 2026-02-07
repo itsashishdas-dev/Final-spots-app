@@ -28,6 +28,15 @@ export const createCrewSlice: StoreSlice<CrewState> = (set, get) => ({
     await get().loadCrews();
   },
 
+  deleteCrew: async (crewId: string) => {
+      // Optimistic delete
+      set(state => ({
+          crews: state.crews.filter(c => c.id !== crewId),
+          activeCrew: state.activeCrew?.id === crewId ? null : state.activeCrew
+      }));
+      // In real backend: await backend.deleteCrew(crewId);
+  },
+
   requestJoinCrew: async (crewId: string) => {
     await backend.requestJoinCrew(crewId);
     await get().loadCrews();

@@ -75,149 +75,68 @@ export const MOCK_SPOTS: Spot[] = [
   { id: 'sikkim-mg-marg', name: 'MG Marg', type: Discipline.SKATE, category: SpotCategory.STREET, difficulty: Difficulty.INTERMEDIATE, state: 'Sikkim', surface: 'Tiles', location: { lat: 27.3389, lng: 88.6065, address: 'Gangtok, Sikkim' }, notes: 'Clean promenades. Pedestrian only.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.7, images: ['https://images.unsplash.com/photo-1572505543666-4836696db307?w=800'], sessions: [] },
 
   // DOWNHILL SPOTS
-  { id: 'nandi-hills', name: 'Nandi Hills', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Karnataka', surface: 'Asphalt', location: { lat: 13.3702, lng: 77.6835, address: 'Bengaluru, Karnataka' }, notes: 'Famous downhill run. Steep and fast.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.9, images: ['https://images.unsplash.com/photo-1564982752979-3f7bc974d29a?w=800'], sessions: [] },
-  { id: 'ponmudi-hills', name: 'Ponmudi Ghats', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Kerala', surface: 'Asphalt', location: { lat: 8.7609, lng: 77.1109, address: 'Thiruvananthapuram, Kerala' }, notes: '22 Hairpin bends. Technical paradise.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.8, images: ['https://images.unsplash.com/photo-1534234828563-0259b95f0c43?w=800'], sessions: [] },
-  { id: 'lavasa-ghat', name: 'Lavasa Ghat', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.PRO, state: 'Maharashtra', surface: 'Asphalt', location: { lat: 18.4093, lng: 73.5053, address: 'Pune, Maharashtra' }, notes: 'World-class pavement. Fast sweepers.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 5.0, images: ['https://images.unsplash.com/photo-1520156584189-1e4529f8c9b3?w=800'], sessions: [] },
-  { id: 'lonavala-khandala', name: 'Khandala Ghat', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Maharashtra', surface: 'Asphalt', location: { lat: 18.7509, lng: 73.3897, address: 'Lonavala, Maharashtra' }, notes: 'Classic ghats for longboard runs. Traffic warning.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.CROWDED, privacy: SpotPrivacy.PUBLIC, rating: 4.3, images: ['https://images.unsplash.com/photo-1572505543666-4836696db307?w=800'], sessions: [] },
-  { id: 'mussoorie-road', name: 'Mussoorie Diversion', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.INTERMEDIATE, state: 'Uttarakhand', surface: 'Asphalt', location: { lat: 30.3782, lng: 78.0772, address: 'Dehradun, Uttarakhand' }, notes: 'Flowy runs near Dehradun.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.5, images: ['https://images.unsplash.com/photo-1564982752979-3f7bc974d29a?w=800'], sessions: [] },
-  { id: 'araku-valley', name: 'Araku Valley Ghats', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Andhra Pradesh', surface: 'Asphalt', location: { lat: 18.3333, lng: 82.8667, address: 'Visakhapatnam, Andhra Pradesh' }, notes: 'Scenic valley roads for downhill.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.7, images: ['https://images.unsplash.com/photo-1534234828563-0259b95f0c43?w=800'], sessions: [] },
-  { id: 'shillong-cherra', name: 'Shillong-Cherrapunji Road', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Meghalaya', surface: 'Asphalt', location: { lat: 25.2755, lng: 91.7326, address: 'Meghalaya' }, notes: 'Misty runs. Watch for wet patches.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.WET, privacy: SpotPrivacy.PUBLIC, rating: 4.8, images: ['https://images.unsplash.com/photo-1520156584189-1e4529f8c9b3?w=800'], sessions: [] },
-  { id: 'munnar-ghat', name: 'Munnar-Devikulam Road', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Kerala', surface: 'Asphalt', location: { lat: 10.0889, lng: 77.0595, address: 'Munnar, Kerala' }, notes: 'Scenic tea garden descent.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.9, images: ['https://images.unsplash.com/photo-1572505543666-4836696db307?w=800'], sessions: [] },
-  { id: 'yercaud-ghat', name: 'Yercaud Ghat', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Tamil Nadu', surface: 'Asphalt', location: { lat: 11.7753, lng: 78.2095, address: 'Yercaud, Tamil Nadu' }, notes: 'Smooth descent with loops.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.6, images: ['https://images.unsplash.com/photo-1564982752979-3f7bc974d29a?w=800'], sessions: [] },
-  { id: 'malshej-ghat', name: 'Malshej Ghat', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.ADVANCED, state: 'Maharashtra', surface: 'Asphalt', location: { lat: 19.2560, lng: 73.6050, address: 'Maharashtra' }, notes: 'Hairpins & sweepers. Foggy in monsoon.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.DRY, privacy: SpotPrivacy.PUBLIC, rating: 4.5, images: ['https://images.unsplash.com/photo-1534234828563-0259b95f0c43?w=800'], sessions: [] },
-  { id: 'agumbe-ghat', name: 'Agumbe Ghat Road', type: Discipline.DOWNHILL, category: SpotCategory.DOWNHILL, difficulty: Difficulty.PRO, state: 'Karnataka', surface: 'Asphalt', location: { lat: 13.5019, lng: 75.1606, address: 'Shimoga, Karnataka' }, notes: 'Rainforest descent. Very technical.', isVerified: true, verificationStatus: VerificationStatus.VERIFIED, status: SpotStatus.WET, privacy: SpotPrivacy.PUBLIC, rating: 4.8, images: ['https://images.unsplash.com/photo-1520156584189-1e4529f8c9b3?w=800'], sessions: [] }
-];
-
-export const BADGE_DATABASE: Badge[] = [
-  { id: 'badge_rookie_push', name: 'First Push', description: 'Began the journey.', tier: BadgeTier.ROOKIE, icon: 'Footprints', conditionDescription: 'Reach Level 2' },
-  { id: 'badge_rookie_spotter', name: 'Spotter', description: 'Eyes on the street.', tier: BadgeTier.ROOKIE, icon: 'MapPin', conditionDescription: 'Find or Verify 1 Spot' },
-  { id: 'badge_initiate_dedicated', name: 'Dedicated', description: 'Consistency is key.', tier: BadgeTier.INITIATE, icon: 'Zap', conditionDescription: 'Maintain a 3-day streak' },
-  { id: 'badge_initiate_local', name: 'The Local', description: 'Part of the furniture.', tier: BadgeTier.INITIATE, icon: 'Home', conditionDescription: 'Complete 10 Sessions' },
-  { id: 'badge_skilled_scholar', name: 'Scholar', description: 'Student of the game.', tier: BadgeTier.SKILLED, icon: 'BookOpen', conditionDescription: 'Master 5 Skills' },
-  { id: 'badge_skilled_challenger', name: 'Contender', description: 'Stepping up.', tier: BadgeTier.SKILLED, icon: 'Swords', conditionDescription: 'Complete 5 Challenges' },
-  { id: 'badge_veteran_guardian', name: 'Guardian', description: 'Protector of the scene.', tier: BadgeTier.VETERAN, icon: 'Shield', conditionDescription: 'Verify 5 Spots & Reach Level 15' },
-  { id: 'badge_veteran_mentor', name: 'Sensei', description: 'Passing the torch.', tier: BadgeTier.VETERAN, icon: 'Users', conditionDescription: 'Host a Mentorship Session' },
-  { id: 'badge_legend_legacy', name: 'Legacy', description: 'Your name echoes.', tier: BadgeTier.LEGEND, icon: 'Crown', conditionDescription: 'Reach Level 50' }
-];
-
-export const MOCK_CHALLENGES: Challenge[] = [
-  {
-    id: 'battle-carter-kickflip',
-    spotId: 'maharashtra-mumbai-carter',
-    spotName: 'Carter Road Skatepark',
-    creatorId: 'u-arjun',
-    creatorName: 'Arjun S.',
-    title: 'Carter Road Kickflip',
-    description: 'Kickflip the gap over the planter. Clean landing required.',
-    difficulty: Difficulty.INTERMEDIATE,
-    xpReward: 300,
-    completions: 14
-  },
-  {
-    id: 'battle-nandi-slide',
-    spotId: 'nandi-hills',
-    spotName: 'Nandi Hills',
-    creatorId: 'u-vikram',
-    creatorName: 'Vikram D.',
-    title: 'Nandi Hairpin Slide',
-    description: 'Hold a toeside standie through the big left hairpin.',
-    difficulty: Difficulty.ADVANCED,
-    xpReward: 500,
-    completions: 5
-  },
-  {
-    id: 'battle-holystoked-drop',
-    spotId: 'karnataka-blr-holystoked',
-    spotName: 'Holystoked Skatepark',
-    creatorId: 'u-simran',
-    creatorName: 'Simran K.',
-    title: 'Holy Drop In',
-    description: 'Drop in from the vert wall extension.',
-    difficulty: Difficulty.ADVANCED,
-    xpReward: 450,
-    completions: 8
-  }
-];
-
-export const MOCK_SESSIONS: ExtendedSession[] = [
-  {
-    id: 'sess-1',
-    userId: 'u-arjun',
-    userName: 'Arjun S.',
-    title: 'Sunday Morning Shred',
-    date: '2025-05-20',
-    time: '07:00',
-    spotId: 'maharashtra-mumbai-carter',
-    spotName: 'Carter Road Skatepark',
-    spotType: Discipline.SKATE,
-    participants: ['u-arjun']
-  }
-];
-
-export const MOCK_MENTORS: Mentor[] = [
-  {
-    id: 'm-1',
-    userId: 'u-arjun',
-    name: 'Arjun S.',
-    avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Arjun',
-    disciplines: [Discipline.SKATE],
-    rate: 800,
-    bio: 'Specializing in technical street and ledge work.',
-    rating: 4.9,
-    reviewCount: 22,
-    earnings: 15000,
-    studentsTrained: 12,
-    badges: [MentorBadge.CERTIFIED, MentorBadge.EXPERT],
-    stats: { technical: 95, style: 85, teaching: 90 }
-  },
-  {
-    id: 'm-2',
-    userId: 'u-priya',
-    name: 'Priya M.',
-    avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Priya',
-    disciplines: [Discipline.DOWNHILL],
-    rate: 1200,
-    bio: 'Downhill racer. Learn safe sliding and pack riding.',
-    rating: 5.0,
-    reviewCount: 15,
-    earnings: 12000,
-    studentsTrained: 8,
-    badges: [MentorBadge.CERTIFIED],
-    stats: { technical: 98, style: 90, teaching: 85 }
-  }
-];
-
-export const MOCK_NOTES: DailyNote[] = [
-  {
-    id: 'note-1',
-    userId: 'u-system',
-    date: new Date().toISOString().split('T')[0],
-    text: 'Skate conditions in Mumbai are prime today. Humidity is low.',
-    timestamp: new Date().toISOString()
+  { 
+    id: 'nandi-hills', 
+    name: 'Nandi Hills', 
+    type: Discipline.DOWNHILL, 
+    category: SpotCategory.DOWNHILL, 
+    difficulty: Difficulty.ADVANCED, 
+    state: 'Karnataka', 
+    surface: 'Asphalt', 
+    location: { lat: 13.3702, lng: 77.6835, address: 'Bengaluru, Karnataka' }, 
+    notes: 'Famous downhill run. Steep and fast.', 
+    isVerified: true, 
+    verificationStatus: VerificationStatus.VERIFIED, 
+    status: SpotStatus.DRY, 
+    privacy: SpotPrivacy.PUBLIC, 
+    rating: 4.9, 
+    images: ['https://images.unsplash.com/photo-1564982752979-3f7bc974d29a?w=800'], 
+    sessions: [],
+    path: [
+        [13.3702, 77.6835], [13.3712, 77.6845], [13.3725, 77.6855], [13.3740, 77.6860]
+    ]
   }
 ];
 
 export const SKILL_LIBRARY: Skill[] = [
-  // Tier 1 - Fundamentals
-  { id: 'skill_skate_push', name: 'Pushing', category: Discipline.SKATE, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 50, description: 'The foundation of movement.', tutorialUrl: 'rCEN55_z8cQ' },
-  { id: 'skill_skate_ollie', name: 'Ollie', category: Discipline.SKATE, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 100, description: 'The jump. Pop the tail and slide your foot.', tutorialUrl: 'arXMwdj7b28' },
-  { id: 'skill_skate_manual', name: 'Manual', category: Discipline.SKATE, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 75, description: 'Balance on two wheels.', tutorialUrl: '1QY_9Q8q1Q' },
-  
-  // Tier 2 - Core Tech
-  { id: 'skill_skate_shuvit', name: 'Pop Shuvit', category: Discipline.SKATE, difficulty: Difficulty.INTERMEDIATE, tier: 2, xpReward: 150, description: 'Spin the board 180 degrees.', tutorialUrl: 'Oq9Y_O6k_rQ', prerequisiteId: 'skill_skate_ollie' },
-  { id: 'skill_skate_kickflip', name: 'Kickflip', category: Discipline.SKATE, difficulty: Difficulty.INTERMEDIATE, tier: 2, xpReward: 200, description: 'Flick the board to flip it.', tutorialUrl: 'efH8Ztg_A5g', prerequisiteId: 'skill_skate_ollie' },
-  
-  // Tier 3 - Advanced
-  { id: 'skill_skate_treflip', name: 'Tre Flip', category: Discipline.SKATE, difficulty: Difficulty.ADVANCED, tier: 3, xpReward: 300, description: '360 Pop Shuvit + Kickflip.', tutorialUrl: 'X_Q8q1QY_9Q', prerequisiteId: 'skill_skate_kickflip' },
+  { id: 'ollie', name: 'Ollie', category: Discipline.SKATE, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 100, description: 'The foundation of street skating. Pop the tail and slide.' },
+  { id: 'shuvit', name: 'Shuv-it', category: Discipline.SKATE, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 100, description: 'Spin the board 180 degrees without flipping.' },
+  { id: 'kickflip', name: 'Kickflip', category: Discipline.SKATE, difficulty: Difficulty.INTERMEDIATE, tier: 2, xpReward: 200, description: 'Flip the board with your toe.', prerequisiteId: 'ollie', tutorialUrl: 'dQw4w9WgXcQ' },
+  { id: 'heelflip', name: 'Heelflip', category: Discipline.SKATE, difficulty: Difficulty.INTERMEDIATE, tier: 2, xpReward: 200, description: 'Flip the board with your heel.', prerequisiteId: 'ollie' },
+  { id: 'treflip', name: 'Tre Flip', category: Discipline.SKATE, difficulty: Difficulty.ADVANCED, tier: 3, xpReward: 300, description: '360 Pop Shuvit + Kickflip.', prerequisiteId: 'kickflip' },
+  { id: 'slide_standie', name: 'Standup Slide', category: Discipline.DOWNHILL, difficulty: Difficulty.INTERMEDIATE, tier: 2, xpReward: 200, description: 'Slide to check speed while standing.' },
+  { id: 'tuck', name: 'Aero Tuck', category: Discipline.DOWNHILL, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 100, description: 'Aerodynamic stance for maximum speed.' },
+  { id: 'coleman', name: 'Coleman Slide', category: Discipline.DOWNHILL, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 150, description: 'Hand-down slide for safety and braking.' },
+];
 
-  // Downhill
-  { id: 'skill_dh_tuck', name: 'Aerodynamic Tuck', category: Discipline.DOWNHILL, difficulty: Difficulty.BEGINNER, tier: 1, xpReward: 50, description: 'Minimize wind resistance.', tutorialUrl: 'Y_Q8q1QY_9Q' },
-  { id: 'skill_dh_coleman', name: 'Coleman Slide', category: Discipline.DOWNHILL, difficulty: Difficulty.INTERMEDIATE, tier: 2, xpReward: 150, description: 'Essential safety slide.', tutorialUrl: 'Z_Q8q1QY_9Q', prerequisiteId: 'skill_dh_tuck' },
+export const BADGE_DATABASE: Badge[] = [
+  { id: 'badge_rookie_start', name: 'First Push', description: 'Completed onboarding', tier: BadgeTier.ROOKIE, icon: '🛹', conditionDescription: 'Create account' },
+  { id: 'badge_skilled_streak', name: 'Consistent', description: '7 Day Streak', tier: BadgeTier.SKILLED, icon: '🔥', conditionDescription: 'Log in 7 days in a row' },
+  { id: 'badge_veteran_guardian', name: 'Guardian', description: 'Verified Spot Contributor', tier: BadgeTier.VETERAN, icon: '🛡️', conditionDescription: 'Verify 5 spots' },
+  { id: 'badge_legend_king', name: 'King of the Hill', description: 'Top of Leaderboard', tier: BadgeTier.LEGEND, icon: '👑', conditionDescription: 'Reach #1 Rank' },
 ];
 
 export const COLLECTIBLES_DATABASE: Collectible[] = [
-  { id: 'sticker_7_day', name: 'Week Streak Sticker', type: CollectibleType.STICKER, rarity: Rarity.COMMON, imageUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=7D', description: 'Awarded for a 7-day session streak.' },
-  { id: 'deck_camo', name: 'Urban Camo Deck', type: CollectibleType.DECK, rarity: Rarity.RARE, imageUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Cam', description: 'Stealth mode for night missions.' },
-  { id: 'wheel_gold', name: 'Golden Urethane', type: CollectibleType.WHEEL, rarity: Rarity.LEGENDARY, imageUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Gold', description: 'The fastest urethane in the sector.' },
-  { id: 'truck_titanium', name: 'Titanium Hollows', type: CollectibleType.TRUCK, rarity: Rarity.EPIC, imageUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=Ti', description: 'Ultra-lightweight trucks.' },
+  { id: 'sticker_7_day', name: 'Retro Logo Sticker', type: CollectibleType.STICKER, rarity: Rarity.COMMON, imageUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=RL', description: 'Classic sticker' },
+  { id: 'deck_gold', name: 'Golden Deck', type: CollectibleType.DECK, rarity: Rarity.LEGENDARY, imageUrl: 'https://api.dicebear.com/7.x/initials/svg?seed=GD', description: 'Shiny gold finish' },
+];
+
+export const MOCK_SESSIONS: ExtendedSession[] = [
+  { id: 's1', userId: 'u-1', userName: 'Rahul', title: 'Morning Shred', date: '2023-10-27', time: '07:00', spotId: 'delhi-cp-inner', spotName: 'Connaught Place', spotType: Discipline.SKATE, participants: ['u-1', 'u-2'] },
+  { id: 's2', userId: 'u-2', userName: 'Priya', title: 'Downhill Practice', date: '2023-10-28', time: '16:00', spotId: 'nandi-hills', spotName: 'Nandi Hills', spotType: Discipline.DOWNHILL, participants: ['u-2'] },
+];
+
+export const MOCK_CHALLENGES: Challenge[] = [
+  { id: 'c1', spotId: 'delhi-cp-inner', spotName: 'Connaught Place', creatorId: 'u-system', creatorName: 'System', title: 'Ollie the 3-Set', description: 'Clean ollie down the main stairs.', difficulty: Difficulty.INTERMEDIATE, xpReward: 300, completions: 12 },
+  { id: 'c2', spotId: 'nandi-hills', spotName: 'Nandi Hills', creatorId: 'u-system', creatorName: 'System', title: 'Sub-2 Minute Run', description: 'Complete the course in under 2 mins.', difficulty: Difficulty.PRO, xpReward: 1000, completions: 3 },
+];
+
+export const MOCK_MENTORS: Mentor[] = [
+  { id: 'm1', userId: 'u-mentor-1', name: 'Arjun K.', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Arjun', disciplines: [Discipline.SKATE], rate: 500, bio: 'Pro street skater with 10 years experience.', rating: 4.9, reviewCount: 42, earnings: 15000, studentsTrained: 25, badges: [MentorBadge.CERTIFIED, MentorBadge.EXPERT] },
+  { id: 'm2', userId: 'u-mentor-2', name: 'Sarah J.', avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Sarah', disciplines: [Discipline.DOWNHILL], rate: 800, bio: 'Downhill racer and safety instructor.', rating: 5.0, reviewCount: 15, earnings: 8000, studentsTrained: 10, badges: [MentorBadge.CERTIFIED] },
+];
+
+export const MOCK_NOTES: DailyNote[] = [
+  { id: 'n1', userId: 'u-1', date: '2023-10-25', text: 'Landed my first kickflip today! Felt amazing.', timestamp: '2023-10-25T10:00:00Z' },
+  { id: 'n2', userId: 'u-1', date: '2023-10-26', text: 'Rainy day, watched tutorials instead.', timestamp: '2023-10-26T14:30:00Z' },
 ];

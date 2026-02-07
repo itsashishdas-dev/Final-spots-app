@@ -1,6 +1,6 @@
 
 import * as React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense, lazy } from 'react';
 import { useAppStore } from '@/store';
 
 // Components
@@ -11,19 +11,20 @@ import CreateChallengeModal from '@/components/CreateChallengeModal';
 import ChatModal from '@/components/ChatModal';
 import LocationPermissionModal from '@/components/LocationPermissionModal';
 import CheckInModal from '@/components/CheckInModal';
+import { LoadingState } from '@/components/LoadingState';
 
-// Views
-import SpotsView from '@/views/SpotsView';
-import GridView from '@/views/GridView';
-import ChallengesView from '@/views/ChallengesView';
-import MentorshipView from '@/views/MentorshipView';
-import JourneyView from '@/views/JourneyView';
-import ProfileView from '@/views/ProfileView';
-import CrewView from '@/views/CrewView';
-import AdminDashboardView from '@/views/AdminDashboardView';
-import LoginView from '@/views/LoginView';
-import OnboardingView from '@/views/OnboardingView';
-import PrivacyPolicyView from '@/views/PrivacyPolicyView';
+// Lazy Loaded Views
+const SpotsView = lazy(() => import('@/views/SpotsView'));
+const GridView = lazy(() => import('@/views/GridView'));
+const ChallengesView = lazy(() => import('@/views/ChallengesView'));
+const MentorshipView = lazy(() => import('@/views/MentorshipView'));
+const JourneyView = lazy(() => import('@/views/JourneyView'));
+const ProfileView = lazy(() => import('@/views/ProfileView'));
+const CrewView = lazy(() => import('@/views/CrewView'));
+const AdminDashboardView = lazy(() => import('@/views/AdminDashboardView'));
+const LoginView = lazy(() => import('@/views/LoginView'));
+const OnboardingView = lazy(() => import('@/views/OnboardingView'));
+const PrivacyPolicyView = lazy(() => import('@/views/PrivacyPolicyView'));
 
 // Services & Utils
 import { triggerHaptic } from '@/utils/haptics';
@@ -112,9 +113,19 @@ const App: React.FC = () => {
     );
   }
 
-  if (showPrivacy) return <PrivacyPolicyView onBack={() => setShowPrivacy(false)} />;
-  if (!isAuthenticated) return <LoginView onLogin={handleLogin} onShowPrivacy={() => setShowPrivacy(true)} />;
-  if (user && !user.onboardingComplete) return <OnboardingView onComplete={(d) => completeOnboarding(d)} />;
+  // Lazy load wrapper for fullscreen views
+  const renderView = () => (
+    <Suspense fallback={<LoadingState fullscreen />}>
+      {showPrivacy ? <PrivacyPolicyView onBack={() => setShowPrivacy(false)} /> :
+       !isAuthenticated ? <LoginView onLogin={handleLogin} onShowPrivacy={() => setShowPrivacy(true)} /> :
+       user && !user.onboardingComplete ? <OnboardingView onComplete={(d) => completeOnboarding(d)} /> :
+       null}
+    </Suspense>
+  );
+
+  if (showPrivacy || !isAuthenticated || (user && !user.onboardingComplete)) {
+      return renderView();
+  }
 
   // Filter data for selected spot
   const spotSessions = selectedSpot ? sessions.filter(s => s.spotId === selectedSpot.id) : [];
@@ -124,15 +135,16 @@ const App: React.FC = () => {
   // --- MAIN LAYOUT ---
   return (
     <AppLayout>
-      {/* ACTIVE VIEW AREA */}
-      {currentView === 'MAP' && <SpotsView />} 
-      {currentView === 'LIST' && <GridView />}
-      {currentView === 'CHALLENGES' && <ChallengesView onNavigate={(t) => setView(t as any)} />}
-      {currentView === 'MENTORSHIP' && <MentorshipView />}
-      {currentView === 'JOURNEY' && <JourneyView />}
-      {currentView === 'PROFILE' && <ProfileView setActiveTab={(t) => setView(t as any)} onLogout={logout} />}
-      {currentView === 'CREW' && <CrewView onBack={() => setView(previousView || 'CHALLENGES')} />}
-      {currentView === 'ADMIN' && <AdminDashboardView onBack={() => setView('PROFILE')} />}
+      <Suspense fallback={<LoadingState fullscreen={false} />}>
+        {currentView === 'MAP' && <SpotsView />} 
+        {currentView === 'LIST' && <GridView />}
+        {currentView === 'CHALLENGES' && <ChallengesView onNavigate={(t) => setView(t as any)} />}
+        {currentView === 'MENTORSHIP' && <MentorshipView />}
+        {currentView === 'JOURNEY' && <JourneyView />}
+        {currentView === 'PROFILE' && <ProfileView setActiveTab={(t) => setView(t as any)} onLogout={logout} />}
+        {currentView === 'CREW' && <CrewView onBack={() => setView(previousView || 'CHALLENGES')} />}
+        {currentView === 'ADMIN' && <AdminDashboardView onBack={() => setView('PROFILE')} />}
+      </Suspense>
 
       {/* GLOBAL OVERLAYS */}
       

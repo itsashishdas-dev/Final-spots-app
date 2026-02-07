@@ -22,12 +22,46 @@ const truncate = (str: string, max: number) => {
 };
 
 const getClient = () => {
-    const key = process.env.API_KEY;
+    const env = (import.meta as any).env || {};
+    const key = env.VITE_GOOGLE_GENAI_KEY;
+    
     if (!key) {
-        console.warn("Security Alert: API_KEY is missing. AI features disabled.");
+        console.warn("Security Alert: VITE_GOOGLE_GENAI_KEY is missing. AI features disabled.");
         return null;
     }
     return new GoogleGenAI({ apiKey: key });
+};
+
+/**
+ * Uses Gemini 3 Flash with Google Search grounding for real-time intel.
+ */
+export const getFieldIntel = async (query: string) => {
+  const ai = getClient();
+  if (!ai) return { text: "Neural uplink offline (Key Missing).", sources: [] };
+
+  try {
+    const response: GenerateContentResponse = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: truncate(query, MAX_PROMPT_LENGTH),
+      config: {
+        tools: [{ googleSearch: {} }],
+        systemInstruction: "You are the PUSH Field Intelligence unit. Provide concise, real-time updates on skateboarding events, spots, or news in India. Focus on facts and provide context for provided links."
+      },
+    });
+    
+    const text = response.text || "Intelligence search returned no results.";
+    const sources = response.candidates?.[0]?.groundingMetadata?.groundingChunks
+      ?.filter(chunk => chunk.web)
+      .map(chunk => ({
+        title: chunk.web!.title,
+        uri: chunk.web!.uri
+      })) || [];
+
+    return { text, sources };
+  } catch (error) {
+    console.error("Search Grounding Failed:", error);
+    return { text: "External intelligence uplink failed. Using internal archives.", sources: [] };
+  }
 };
 
 /**

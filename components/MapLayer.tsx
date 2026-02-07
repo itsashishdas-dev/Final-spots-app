@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppStore } from '../store';
-import { useSpotsData, useSpotsActions } from '../features/spots';
+import { useSpotsActions } from '../features/spots';
 import { Discipline, Spot, SpotCategory } from '../types';
 import { triggerHaptic } from '../utils/haptics';
 
@@ -22,15 +22,21 @@ const LEGEND_ITEMS = [
     { id: 'flat', color: '#3b82f6', svg: MAP_ICONS.flat },
 ];
 
-const MapLayer: React.FC = () => {
+interface MapLayerProps {
+    spots: Spot[];
+    onMapReady?: (map: any) => void;
+    isEditMode?: boolean;
+    onSpotDragEnd?: (spot: Spot, lat: number, lng: number) => void;
+}
+
+const MapLayer: React.FC<MapLayerProps> = ({ spots, onMapReady, isEditMode = false, onSpotDragEnd }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersLayerRef = useRef<any>(null);
   const userMarkerRef = useRef<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
 
-  const { location: userCoords } = useAppStore();
-  const { spots, selectedSpot } = useSpotsData();
+  const { location: userCoords, selectedSpot, isPinDropActive, setTempLocation, setPinDropActive } = useAppStore();
   const { selectSpot, openSpotDetail } = useSpotsActions();
 
   // 1. Initialize Map
@@ -51,17 +57,27 @@ const MapLayer: React.FC = () => {
             subdomains: 'abcd'
         }).addTo(map);
 
-        map.on('click', () => {
-            selectSpot(null);
+        map.on('click', (e: any) => {
+            // Check if Pin Drop mode is active
+            const state = useAppStore.getState();
+            if (state.isPinDropActive) {
+                const { lat, lng } = e.latlng;
+                state.setTempLocation({ lat, lng });
+                state.setPinDropActive(false);
+                triggerHaptic('success');
+            } else {
+                selectSpot(null);
+            }
         });
 
         mapInstanceRef.current = map;
+        if (onMapReady) onMapReady(map); 
+        
         markersLayerRef.current = L.layerGroup().addTo(map);
         setIsMapReady(true);
     }
 
     return () => {
-        // Cleanup if component unmounts (rare in this architecture)
         if (mapInstanceRef.current) {
             mapInstanceRef.current.remove();
             mapInstanceRef.current = null;
@@ -97,49 +113,82 @@ const MapLayer: React.FC = () => {
       }
   }, [userCoords, isMapReady]);
 
-  // 3. Update Spot Markers
+  // 3. Update Spot Markers & Paths
   useEffect(() => {
       const L = (window as any).L;
       if (isMapReady && mapInstanceRef.current && markersLayerRef.current && L) {
           markersLayerRef.current.clearLayers();
 
-          spots.slice(0, 50).forEach(spot => {
+          spots.forEach(spot => {
+            if (!spot.location) return;
             const isSelected = spot.id === selectedSpot?.id;
             
-            let config = LEGEND_ITEMS.find(item => item.id === 'street');
-            if (spot.type === Discipline.DOWNHILL) config = LEGEND_ITEMS.find(item => item.id === 'downhill');
-            else if (spot.category === SpotCategory.PARK) config = LEGEND_ITEMS.find(item => item.id === 'park');
-            else if (spot.category === SpotCategory.DIY) config = LEGEND_ITEMS.find(item => item.id === 'diy');
-            
-            const color = config?.color || '#6366f1';
-            const svg = config?.svg || MAP_ICONS.street;
-            
-            const html = `
-               <div class="relative w-8 h-8 flex items-center justify-center group transition-transform duration-300 ${isSelected ? 'scale-150 z-50' : 'hover:scale-125 z-40'}">
-                  <div class="absolute inset-0 rounded-full animate-pulse opacity-50" style="background-color: ${color}"></div>
-                  <div class="relative w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white z-10" style="background-color: ${color}">
-                      ${svg}
-                  </div>
-               </div>
-            `;
+            // --- A. Render Path (Polyline) for Downhill ---
+            if (spot.path && spot.path.length > 1) {
+                const polyline = L.polyline(spot.path, {
+                    color: '#a855f7', 
+                    weight: isSelected ? 6 : 4,
+                    opacity: 0.8,
+                    lineJoin: 'round',
+                    dashArray: isSelected ? null : '5, 10'
+                });
 
-            const marker = L.marker([spot.location.lat, spot.location.lng], {
-              icon: L.divIcon({ className: 'bg-transparent', html: html, iconSize: [32, 32], iconAnchor: [16, 16] }),
-              zIndexOffset: isSelected ? 1000 : 100
-            });
+                polyline.on('click', (e: any) => {
+                    L.DomEvent.stopPropagation(e);
+                    triggerHaptic('medium');
+                    selectSpot(spot);
+                    openSpotDetail();
+                    mapInstanceRef.current?.fitBounds(polyline.getBounds(), { padding: [50, 50], animate: true, duration: 1.0 });
+                });
 
-            marker.on('click', (e: any) => {
-                L.DomEvent.stopPropagation(e);
-                triggerHaptic('medium');
-                selectSpot(spot);
-                openSpotDetail();
-                mapInstanceRef.current?.flyTo([spot.location.lat - 0.002, spot.location.lng], 16, { duration: 1 });
-            });
-            
-            marker.addTo(markersLayerRef.current);
+                polyline.addTo(markersLayerRef.current);
+            }
+
+            // --- B. Render Marker (Spot Location) ---
+            const isValidCoord = 
+                typeof spot.location.lat === 'number' && 
+                typeof spot.location.lng === 'number' && 
+                (Math.abs(spot.location.lat) > 0.1 || Math.abs(spot.location.lng) > 0.1);
+
+            if (isValidCoord) {
+                let config = LEGEND_ITEMS.find(item => item.id === 'street');
+                if (spot.type === Discipline.DOWNHILL) config = LEGEND_ITEMS.find(item => item.id === 'downhill');
+                else if (spot.category === SpotCategory.PARK) config = LEGEND_ITEMS.find(item => item.id === 'park');
+                else if (spot.category === SpotCategory.DIY) config = LEGEND_ITEMS.find(item => item.id === 'diy');
+                
+                const color = config?.color || '#6366f1';
+                const svg = config?.svg || MAP_ICONS.street;
+                
+                const html = `
+                   <div class="relative w-8 h-8 flex items-center justify-center group transition-transform duration-300 ${isSelected ? 'scale-150 z-50' : 'hover:scale-125 z-40'}">
+                      <div class="absolute inset-0 rounded-full animate-pulse opacity-50" style="background-color: ${color}"></div>
+                      <div class="relative w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-white z-10" style="background-color: ${color}">
+                          ${svg}
+                      </div>
+                   </div>
+                `;
+
+                const marker = L.marker([spot.location.lat, spot.location.lng], {
+                  icon: L.divIcon({ className: 'bg-transparent', html: html, iconSize: [32, 32], iconAnchor: [16, 16] }),
+                  zIndexOffset: isSelected ? 1000 : 100,
+                  draggable: false // MODERATOR EDIT REQUIREMENT: Disable marker dragging entirely
+                });
+
+                marker.on('click', (e: any) => {
+                    L.DomEvent.stopPropagation(e);
+                    triggerHaptic('medium');
+                    selectSpot(spot);
+                    if (!isEditMode) {
+                        openSpotDetail();
+                    }
+                    mapInstanceRef.current?.flyTo([spot.location.lat - 0.002, spot.location.lng], 16, { duration: 1 });
+                });
+
+                marker.addTo(markersLayerRef.current);
+            }
           });
       }
-  }, [spots, selectedSpot, isMapReady]);
+  }, [spots, selectedSpot, isMapReady, isEditMode]);
 
   return <div ref={mapContainerRef} className="absolute inset-0 z-0 h-full w-full pointer-events-auto" />;
 };

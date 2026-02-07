@@ -34,25 +34,26 @@ const generateId = (prefix: string) => `${prefix}-${Math.random().toString(36).s
 const MOCK_USER: User = {
   id: 'u-1',
   shareId: '8832',
-  name: 'Guest',
-  avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Guest',
+  name: 'System Admin',
+  email: 'admin@push.com', // <--- GRANTS MODERATOR ACCESS
+  avatar: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Admin',
   location: 'Mumbai',
-  level: 1,
-  xp: 0,
-  disciplines: [Discipline.SKATE],
+  level: 42,
+  xp: 15000,
+  disciplines: [Discipline.SKATE, Discipline.DOWNHILL],
   stance: 'regular',
-  badges: [],
-  masteredSkills: [],
-  landedSkills: [],
+  badges: ['badge_veteran_guardian', 'badge_legend_king'],
+  masteredSkills: ['ollie', 'kickflip'],
+  landedSkills: ['shuvit'],
   pendingSkills: [],
   locker: [],
   completedChallengeIds: [],
   onboardingComplete: false,
-  isLinked: false,
+  isLinked: true,
   soundEnabled: true,
   notificationsEnabled: false,
-  streak: 0,
-  stats: { totalSessions: 0 }
+  streak: 12,
+  stats: { totalSessions: 42 }
 };
 
 const MOCK_CREWS_LIST: Crew[] = [
@@ -106,7 +107,14 @@ class MockBackendService {
   }
 
   async isLoggedIn(): Promise<boolean> {
-      return !!safeStorage.getItem(STORAGE_KEYS.USER);
+      // Always return true if user key exists, or if we want to auto-login mock user
+      const hasUser = !!safeStorage.getItem(STORAGE_KEYS.USER);
+      if (!hasUser) {
+          // Auto-seed for dev convenience
+          await this.login();
+          return true;
+      }
+      return true;
   }
 
   async logout(): Promise<void> {

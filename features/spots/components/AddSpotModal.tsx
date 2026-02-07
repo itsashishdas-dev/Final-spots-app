@@ -4,9 +4,18 @@ import { createPortal } from 'react-dom';
 import { X, MapPin, CheckCircle2, Loader2, Camera, LocateFixed, Eye, EyeOff, Users, Video, ChevronDown, Crosshair, UploadCloud } from 'lucide-react';
 import { Discipline, Difficulty, SpotPrivacy } from '../../../types';
 import { useSpotsActions } from '../hooks/useSpots';
-import { useAppStore } from '../../../store'; // Still needed for closeModal and user until auth feature is refactored
+import { useAppStore } from '../../../store';
 import { triggerHaptic } from '../../../utils/haptics';
 import { playSound } from '../../../utils/audio';
+import { z } from 'zod';
+
+const spotSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 chars").max(50, "Name too long"),
+  type: z.nativeEnum(Discipline),
+  difficulty: z.nativeEnum(Difficulty),
+  privacy: z.nativeEnum(SpotPrivacy),
+  description: z.string().optional()
+});
 
 const AddSpotModal: React.FC = () => {
   const { closeModal, user } = useAppStore();
@@ -17,6 +26,7 @@ const AddSpotModal: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [coords, setCoords] = useState<{lat: number, lng: number} | null>(null);
   const [gpsError, setGpsError] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   
   const [images, setImages] = useState<File[]>([]);
   const [video, setVideo] = useState<File | null>(null);
@@ -79,7 +89,34 @@ const AddSpotModal: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-      if (!form.name || !coords || images.length === 0 || !video) return;
+      // 1. Zod Validation
+      try {
+          spotSchema.parse(form);
+          setValidationErrors({});
+      } catch (error) {
+          if (error instanceof z.ZodError) {
+              const errors: Record<string, string> = {};
+              error.errors.forEach(err => {
+                  if (err.path[0]) errors[err.path[0].toString()] = err.message;
+              });
+              setValidationErrors(errors);
+              triggerHaptic('error');
+              return;
+          }
+      }
+
+      // 2. Hardware Checks
+      if (!coords) {
+          setGpsError("COORDINATES REQUIRED");
+          triggerHaptic('error');
+          return;
+      }
+      
+      if (images.length === 0 || !video) {
+          triggerHaptic('error');
+          return;
+      }
+
       setIsLoading(true);
       triggerHaptic('medium');
       playSound('data_stream');
@@ -88,7 +125,7 @@ const AddSpotModal: React.FC = () => {
       const totalSteps = 20;
       for (let i = 0; i <= totalSteps; i++) {
           setProgress((i / totalSteps) * 100);
-          await new Promise(r => setTimeout(r, 50)); // Total ~1s visual delay
+          await new Promise(r => setTimeout(r, 50)); 
       }
       
       try {
@@ -184,6 +221,7 @@ const AddSpotModal: React.FC = () => {
                             </>
                         )}
                     </button>
+                    {gpsError && <p className="text-[8px] text-red-500 font-bold uppercase tracking-widest">{gpsError}</p>}
                 </div>
 
                 {/* Spot Name */}
@@ -195,9 +233,10 @@ const AddSpotModal: React.FC = () => {
                         type="text"
                         value={form.name}
                         onChange={e => setForm({...form, name: e.target.value})}
-                        className="w-full bg-[#0f1218] border border-[#1e293b] rounded-lg p-4 text-sm font-bold text-white focus:outline-none focus:border-indigo-500 uppercase placeholder:text-slate-700 tracking-wider font-mono transition-colors"
+                        className={`w-full bg-[#0f1218] border rounded-lg p-4 text-sm font-bold text-white focus:outline-none uppercase placeholder:text-slate-700 tracking-wider font-mono transition-colors ${validationErrors.name ? 'border-red-500' : 'border-[#1e293b] focus:border-indigo-500'}`}
                         placeholder="ENTER DESTINATION"
                     />
+                    {validationErrors.name && <p className="text-[8px] text-red-500 font-bold uppercase tracking-widest">{validationErrors.name}</p>}
                 </div>
 
                 {/* Details Row */}
@@ -266,7 +305,7 @@ const AddSpotModal: React.FC = () => {
 
                 <button 
                     onClick={handleSubmit}
-                    disabled={!isFormValid}
+                    disabled={isLoading}
                     className={`w-full h-14 bg-indigo-600 text-white border border-indigo-500 rounded-xl font-black uppercase tracking-[0.2em] text-[10px] shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:bg-[#1e293b] disabled:border-[#334155] disabled:cursor-not-allowed hover:bg-indigo-500 mt-4 relative overflow-hidden`}
                 >
                     {isLoading ? (

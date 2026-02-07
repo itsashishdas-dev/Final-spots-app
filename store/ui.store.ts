@@ -9,6 +9,7 @@ export const createUISlice: StoreSlice<UIState> = (set) => ({
   mapViewSettings: null,
   isLoading: true,
   error: null,
+  isPinDropActive: false,
 
   setView: (view: AppView) => 
     set((state) => ({ 
@@ -26,4 +27,6 @@ export const createUISlice: StoreSlice<UIState> = (set) => ({
   setLoading: (loading) => set({ isLoading: loading }),
   
   setError: (error) => set({ error }),
+
+  setPinDropActive: (active) => set({ isPinDropActive: active })
 });

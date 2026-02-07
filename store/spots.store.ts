@@ -8,6 +8,8 @@ export const createSpotsSlice: StoreSlice<SpotsState> = (set, get) => ({
   selectedSpot: null,
   lastUpdated: 0,
   isStale: true,
+  lastEdit: null,
+  tempLocation: null,
 
   refreshSpots: async () => {
     // 1. Get data (Cache Priority)
@@ -57,8 +59,95 @@ export const createSpotsSlice: StoreSlice<SpotsState> = (set, get) => ({
     return newSpot;
   },
 
+  // Moderator Action
+  updateSpot: async (id: string, updates: Partial<Spot>) => {
+      const currentSpots = get().spots;
+      const originalSpot = currentSpots.find(s => s.id === id);
+      
+      if (!originalSpot) return;
+
+      // 1. Capture state for Undo
+      set({ 
+          lastEdit: { 
+              spotId: id, 
+              previousState: JSON.parse(JSON.stringify(originalSpot)) 
+          } 
+      });
+
+      // 2. Optimistic Update
+      const updatedSpots = currentSpots.map(s => 
+          s.id === id ? { ...s, ...updates } : s
+      );
+      
+      // CRITICAL: Update selectedSpot if it's the one being edited so Modals refresh
+      const currentSelected = get().selectedSpot;
+      const updatedSelected = currentSelected && currentSelected.id === id 
+          ? { ...currentSelected, ...updates } 
+          : currentSelected;
+
+      set({ 
+          spots: updatedSpots,
+          selectedSpot: updatedSelected,
+          tempLocation: null // Reset temp location on save
+      });
+
+      // 3. Network Call & Logging
+      try {
+          await spotsService.update(id, updates);
+          
+          // Log edit to audit trail (non-blocking)
+          const user = get().user;
+          if (user) {
+              spotsService.logEdit({
+                  spotId: id,
+                  editorId: user.id,
+                  prevLat: originalSpot.location.lat,
+                  prevLng: originalSpot.location.lng,
+                  newLat: updates.location?.lat ?? originalSpot.location.lat,
+                  newLng: updates.location?.lng ?? originalSpot.location.lng
+              });
+          }
+      } catch (error) {
+          // Revert on error
+          set({ spots: currentSpots, selectedSpot: currentSelected });
+          console.error("Failed to update spot", error);
+          throw error;
+      }
+  },
+
+  undoLastEdit: async () => {
+      const { lastEdit, spots, selectedSpot } = get();
+      if (!lastEdit) return;
+
+      // Revert in UI
+      const updatedSpots = spots.map(s => 
+          s.id === lastEdit.spotId ? lastEdit.previousState : s
+      );
+      
+      // Update selectedSpot if needed
+      const updatedSelected = selectedSpot && selectedSpot.id === lastEdit.spotId 
+          ? lastEdit.previousState 
+          : selectedSpot;
+
+      set({ spots: updatedSpots, selectedSpot: updatedSelected, lastEdit: null }); // Clear undo after use
+
+      // Revert in Backend
+      try {
+          await spotsService.update(lastEdit.spotId, {
+              location: lastEdit.previousState.location,
+              name: lastEdit.previousState.name,
+              type: lastEdit.previousState.type,
+              difficulty: lastEdit.previousState.difficulty
+          });
+      } catch (error) {
+          console.error("Failed to undo edit", error);
+          // Force refresh if undo fails to ensure consistency
+          get().refreshSpots();
+      }
+  },
+
   selectSpot: (spot: Spot | null) => {
-    set({ selectedSpot: spot });
+    set({ selectedSpot: spot, tempLocation: null });
   },
 
   verifySpot: async (spotId: string, status: VerificationStatus) => {
@@ -81,5 +170,9 @@ export const createSpotsSlice: StoreSlice<SpotsState> = (set, get) => ({
       const currentSpots = get().spots;
       set({ spots: currentSpots.filter(s => s.id !== spotId) });
       // In real implementation: await spotsService.delete(spotId);
+  },
+
+  setTempLocation: (loc) => {
+      set({ tempLocation: loc });
   }
 });

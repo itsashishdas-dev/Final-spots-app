@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { Settings, Lock, Shield, Trophy, Zap, Users, MapPin, ChevronRight, Plus, Activity, User as UserIcon, LogOut, Bell, Volume2, VolumeX, UserCog, X, Save, Type, Footprints, History, Hexagon, Star, Gamepad2, Smartphone, Home, Calendar, Camera, AlertTriangle, Apple, Wifi, Database } from 'lucide-react';
+import { Settings, Lock, Shield, Trophy, Zap, Users, MapPin, ChevronRight, Plus, Activity, User as UserIcon, LogOut, Bell, Volume2, VolumeX, UserCog, X, Save, Type, Footprints, History, Hexagon, Star, Gamepad2, Smartphone, Home, Calendar, Camera, AlertTriangle, Apple, Wifi, Database, Command } from 'lucide-react';
 import { BadgeTier } from '../types';
 import { COLLECTIBLES_DATABASE, BADGE_DATABASE } from '../core/constants';
 import { triggerHaptic } from '../utils/haptics';
@@ -85,6 +85,8 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onLogout, setActiveTab }) => 
   };
 
   if (!user) return null;
+
+  const isModerator = user.email && ['admin@push.com', 'mod@push.com'].includes(user.email);
 
   // Progression Maths
   let xpAccumulated = 0;
@@ -256,6 +258,28 @@ const ProfileView: React.FC<ProfileViewProps> = ({ onLogout, setActiveTab }) => 
                                <span className="text-[7px] font-bold text-slate-500 uppercase tracking-widest">Total XP</span>
                            </div>
                        </div>
+
+                        {/* MODERATOR BUTTON */}
+                        {isModerator && (
+                            <button 
+                                onClick={() => { triggerHaptic('medium'); setActiveTab('ADMIN'); }}
+                                className="w-full bg-red-950/30 border border-red-500/50 p-4 rounded-xl flex items-center justify-between group active:scale-[0.98] transition-all hover:bg-red-900/50 relative overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.2)]"
+                            >
+                                <div className="flex items-center gap-3 relative z-10">
+                                    <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/30 flex items-center justify-center text-red-400 group-hover:text-white transition-colors">
+                                        <Command size={18} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-sm font-black uppercase italic text-red-100 tracking-wide">Admin Console</h3>
+                                        <p className="text-[9px] font-bold text-red-400 uppercase tracking-widest">Access System Core</p>
+                                    </div>
+                                </div>
+                                <div className="bg-red-500 text-black px-2 py-1 text-[8px] font-black uppercase rounded-sm relative z-10 animate-pulse">
+                                    Auth Granted
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-red-500/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                            </button>
+                        )}
 
                        {/* Crew Status */}
                        <div onClick={navigateToCrew} className="w-full bg-[#0b0c10] rounded-lg border border-slate-800 p-4 flex items-center gap-4 relative overflow-hidden group cursor-pointer active:scale-[0.99] transition-all">

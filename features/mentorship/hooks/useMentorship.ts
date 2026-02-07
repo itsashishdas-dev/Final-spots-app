@@ -2,9 +2,15 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { Mentor, Discipline } from '../../../types';
-import { askAICoach } from '../../../services/geminiService';
+import { askAICoach, getFieldIntel } from '../../../services/geminiService';
 import { triggerHaptic } from '../../../utils/haptics';
 import { playSound } from '../../../utils/audio';
+
+export interface ChatMessage {
+    role: 'user' | 'model';
+    text: string;
+    sources?: { title: string; uri: string }[];
+}
 
 export const useMentorship = () => {
   const { user, bookMentorSession, mentors } = useAppStore();
@@ -18,9 +24,11 @@ export const useMentorship = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
 
+  // AI Interface State
   const [aiInput, setAiInput] = useState('');
-  const [chat, setChat] = useState<{role: 'user' | 'model', text: string}[]>([]);
+  const [chat, setChat] = useState<ChatMessage[]>([]);
   const [isAiThinking, setIsAiThinking] = useState(false);
+  const [isSearchMode, setIsSearchMode] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { if (activeTab === 'ai-coach') chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [chat, activeTab]);
@@ -47,8 +55,13 @@ export const useMentorship = () => {
     playSound('click');
     
     try {
-        const response = await askAICoach(textToSend);
-        setChat(prev => [...prev, { role: 'model', text: response }]);
+        if (isSearchMode) {
+            const { text, sources } = await getFieldIntel(textToSend);
+            setChat(prev => [...prev, { role: 'model', text, sources }]);
+        } else {
+            const response = await askAICoach(textToSend);
+            setChat(prev => [...prev, { role: 'model', text: response }]);
+        }
         triggerHaptic('medium');
         playSound('data_stream');
     } catch {
@@ -106,6 +119,8 @@ export const useMentorship = () => {
     isAiThinking,
     chatEndRef,
     handleAiSend,
-    isEligibleForMentor
+    isEligibleForMentor,
+    isSearchMode,
+    setIsSearchMode
   };
 };

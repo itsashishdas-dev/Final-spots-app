@@ -45,6 +45,14 @@ export const createGameSlice: StoreSlice<GameState> = (set, get) => ({
     await get().initializeGameData();
   },
 
+  deleteChallenge: async (challengeId: string) => {
+      // Optimistic update
+      set(state => ({
+          challenges: state.challenges.filter(c => c.id !== challengeId)
+      }));
+      // In real implementation: await backend.deleteChallenge(challengeId);
+  },
+
   upvoteSubmission: async (submissionId: string) => {
     // Optimistic UI updates are handled in the component/view usually
     // This action ensures the backend (or queue) gets the request

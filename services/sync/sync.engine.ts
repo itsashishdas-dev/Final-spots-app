@@ -42,7 +42,9 @@ export const syncEngine = {
       const now = Date.now();
 
       // Get Current User for RLS
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
+      const user = session?.user;
+
       if (!user) {
           console.warn('[SyncEngine] No user authenticated. Pausing sync.');
           this.isSyncing = false;

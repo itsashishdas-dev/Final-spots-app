@@ -12,6 +12,7 @@ export interface UIState {
   mapViewSettings: { center: { lat: number; lng: number }; zoom: number } | null;
   isLoading: boolean;
   error: string | null;
+  isPinDropActive: boolean;
   
   setView: (view: AppView) => void;
   openModal: (type: ModalType, data?: any) => void;
@@ -19,6 +20,7 @@ export interface UIState {
   setMapViewSettings: (settings: { center: { lat: number; lng: number }; zoom: number } | null) => void;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  setPinDropActive: (active: boolean) => void;
 }
 
 export interface UserState {
@@ -43,12 +45,17 @@ export interface SpotsState {
   selectedSpot: Spot | null;
   lastUpdated: number;
   isStale: boolean;
+  lastEdit: { spotId: string, previousState: Spot } | null;
+  tempLocation: { lat: number, lng: number } | null;
   
   refreshSpots: () => Promise<void>;
   addNewSpot: (spotData: Partial<Spot>) => Promise<Spot>;
+  updateSpot: (id: string, updates: Partial<Spot>) => Promise<void>;
+  undoLastEdit: () => Promise<void>;
   selectSpot: (spot: Spot | null) => void;
   verifySpot: (spotId: string, status: VerificationStatus) => Promise<void>;
   deleteSpot: (spotId: string) => Promise<void>;
+  setTempLocation: (loc: { lat: number, lng: number } | null) => void;
 }
 
 export interface SessionState {
@@ -78,6 +85,7 @@ export interface GameState {
   
   initializeGameData: () => Promise<void>;
   createChallenge: (data: Partial<Challenge>) => Promise<void>;
+  deleteChallenge: (challengeId: string) => Promise<void>;
   upvoteSubmission: (submissionId: string) => Promise<void>;
   selectSkill: (skill: Skill | null) => void;
   markSkillLanded: (skillId: string) => Promise<void>;
@@ -95,6 +103,7 @@ export interface CrewState {
   loadCrews: () => Promise<void>;
   loadUserCrew: (crewId: string) => Promise<void>;
   createCrew: (data: Partial<Crew>) => Promise<void>;
+  deleteCrew: (crewId: string) => Promise<void>;
   requestJoinCrew: (crewId: string) => Promise<void>;
   respondToJoinRequest: (crewId: string, userId: string, approved: boolean) => Promise<void>;
   leaveCrew: () => Promise<void>;
